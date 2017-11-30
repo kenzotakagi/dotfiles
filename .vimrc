@@ -32,22 +32,20 @@ NeoBundle 'scrooloose/syntastic'
 NeoBundle 'pmsorhaindo/syntastic-local-eslint.vim'
 "ctrlp
 NeoBundle "ctrlpvim/ctrlp.vim"
+" ファイルをtree表示してくれる
+NeoBundle 'scrooloose/nerdtree'
+" Rails向けのコマンドを提供する
+NeoBundle 'tpope/vim-rails'
+" Ruby向けにendを自動挿入してくれる
+NeoBundle 'tpope/vim-endwise'
+" コメントON/OFFを手軽に実行
+NeoBundle 'tomtom/tcomment_vim'
 "rubocop
 NeoBundle 'scrooloose/syntastic'
 let g:syntastic_mode_map = { 'mode': 'passive',
             \ 'active_filetypes': ['ruby'] }
 let g:syntastic_ruby_checkers = ['rubocop']
 NeoBundle 'yuku-t/vim-ref-ri'
-" vimのlua機能が使える時だけ以下のVimプラグインをインストールする
-if has('lua')
-    " コードの自動補完
-    NeoBundle 'Shougo/neocomplete.vim'
-    " スニペットの補完機能
-    NeoBundle "Shougo/neosnippet"
-    " スニペット集
-    NeoBundle 'Shougo/neosnippet-snippets'
-endif
-
 call neobundle#end()
 
 " ファイルタイプ別のVimプラグイン/インデントを有効にする
