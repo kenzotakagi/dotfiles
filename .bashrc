@@ -27,8 +27,37 @@ export EDITOR=vim
 function cdls() {
 # cdがaliasでループするのでをつける
  \cd $1;
-  ls;
+  ls -G;
 }
+
+# search history
+peco-select-history() {
+  local tac
+  if which tac > /dev/null; then
+    tac="tac"
+  else
+    tac="tail -r"
+  fi
+  local l=$(\history | awk '{$1="";print}' | eval $tac | peco | cut -d' ' -f4-)
+  READLINE_LINE="${l}"
+  READLINE_POINT=${#l}
+}
+
+# search current directory
+peco-find() {
+  local l=$(\find . -maxdepth 8 -a \! -regex '.*/\..*' | peco)
+  READLINE_LINE="${READLINE_LINE:0:$READLINE_POINT}${l}${READLINE_LINE:$READLINE_POINT}"
+  READLINE_POINT=$(($READLINE_POINT + ${#l}))
+}
+function peco-find-all() {
+  local l=$(\find . -maxdepth 8 | peco)
+  READLINE_LINE="${READLINE_LINE:0:$READLINE_POINT}${l}${READLINE_LINE:$READLINE_POINT}"
+  READLINE_POINT=$(($READLINE_POINT + ${#l}))
+}
+
+bind -x '"\C-uc": peco-find'
+bind -x '"\C-ua": peco-find-all'
+bind -x '"\C-r": peco-select-history'
 
 alias ls="ls -G"
 alias rake="bundle exec rake"
@@ -52,4 +81,3 @@ alias fe="git fetch"
 alias gg="git grep"
 alias vi="vim"
 alias vii="vim +"
-

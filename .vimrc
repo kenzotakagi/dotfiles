@@ -15,9 +15,8 @@ if has('vim_starting')
     endif
 endif
 
-call neobundle#begin(expand('~/.vim/bundle/'))
-
 " インストールするVimプラグインを以下に記述
+call neobundle#begin(expand('~/.vim/bundle/'))
 " NeoBundle自身を管理
 NeoBundleFetch 'Shougo/neobundle.vim'
 " ステータスラインの表示内容強化
@@ -30,22 +29,9 @@ NeoBundle 'bronson/vim-trailing-whitespace'
 NeoBundle 'scrooloose/syntastic'
 " プロジェクトに入ってるESLintを読み込む
 NeoBundle 'pmsorhaindo/syntastic-local-eslint.vim'
-"ctrlp
-NeoBundle "ctrlpvim/ctrlp.vim"
 " ファイルをtree表示してくれる
 NeoBundle 'scrooloose/nerdtree'
-" Rails向けのコマンドを提供する
-NeoBundle 'tpope/vim-rails'
-" Ruby向けにendを自動挿入してくれる
-NeoBundle 'tpope/vim-endwise'
 " コメントON/OFFを手軽に実行
-NeoBundle 'tomtom/tcomment_vim'
-"rubocop
-NeoBundle 'scrooloose/syntastic'
-let g:syntastic_mode_map = { 'mode': 'passive',
-            \ 'active_filetypes': ['ruby'] }
-let g:syntastic_ruby_checkers = ['rubocop']
-NeoBundle 'yuku-t/vim-ref-ri'
 call neobundle#end()
 
 " ファイルタイプ別のVimプラグイン/インデントを有効にする
@@ -61,6 +47,7 @@ colorscheme hybrid
 let g:hybrid_use_iTerm_colors = 1
 colorscheme hybrid
 syntax on
+
 "----------------------------------------------------------
 " 文字
 "----------------------------------------------------------
@@ -82,6 +69,7 @@ set ruler " ステータスラインの右側にカーソルの位置を表示�
 "----------------------------------------------------------
 set wildmenu " コマンドモードの補完
 set history=5000 " 保存するコマンド履歴の数
+
 "----------------------------------------------------------
 " タブ・インデント
 "----------------------------------------------------------
@@ -100,29 +88,11 @@ set ignorecase " 検索パターンに大文字小文字を区別しない
 set smartcase " 検索パターンに大文字を含んでいたら大文字小文字を区別する
 set hlsearch " 検索結果をハイライト
 
-" ESCキー2度押しでハイライトの切り替え
-nnoremap <silent><Esc><Esc> :<C-u>set nohlsearch!<CR>
-
 "----------------------------------------------------------
 " カーソル
 "----------------------------------------------------------
 set whichwrap=b,s,h,l,<,>,[,],~ " カーソルの左右移動で行末から次の行の行頭への移動が可能になる
 set number " 行番号を表示
-
-" 行が折り返し表示されていた場合、行単位ではなく表示行単位でカーソルを移動する
-nnoremap j gj
-nnoremap k gk
-nnoremap <down> gj
-nnoremap <up> gk
-" 日本語入力がオンのままでも使えるコマンド(Enterキーは必要)
-nnoremap あ a
-nnoremap い i
-nnoremap う u
-nnoremap お o
-nnoremap ｐ p
-noremap <S-G> G$
-" バックスペースキーの有効化
-set backspace=indent,eol,start
 
 "----------------------------------------------------------
 " カッコ・タグの対応
@@ -146,7 +116,7 @@ if &term =~ "xterm"
 
     inoremap <special> <expr> <Esc>[200~ XTermPasteBegin("")
 endif
-
+set clipboard+=unnamed
 "----------------------------------------------------------
 " neocomplete・neosnippetの設定
 "----------------------------------------------------------
@@ -191,12 +161,23 @@ let g:syntastic_mode_map = { 'mode': 'passive',
                            \ 'active_filetypes': ['javascript'],
                            \ 'passive_filetypes': [] }
 
+"----------------------------------------------------------
+" その他
+"----------------------------------------------------------
+set backspace=indent,eol,start " バックスペースキーの有効化
+" 日本語入力がオンのままでも使えるコマンド(Enterキーは必要)
+nnoremap あ a
+nnoremap い i
+nnoremap う u
+nnoremap お o
+nnoremap ｐ p
+noremap <S-G> G$
+" ESCキー2度押しでハイライトの切り替え
+nnoremap <silent><Esc><Esc> :<C-u>set nohlsearch!<CR>
 if !exists('loaded_matchit')
   " matchitを有効化
   runtime macros/matchit.vim
 endif
 " 文末の空白を削除
 autocmd BufWritePre * :%s/\s\+$//ge
-
-set clipboard+=unnamed
 
