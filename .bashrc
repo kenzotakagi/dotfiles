@@ -31,16 +31,28 @@ function cdls() {
 }
 
 # search history
-peco-select-history() {
-  local tac
-  if which tac > /dev/null; then
-    tac="tac"
-  else
-    tac="tail -r"
-  fi
-  local l=$(\history | awk '{$1="";print}' | eval $tac | peco | cut -d' ' -f4-)
-  READLINE_LINE="${l}"
-  READLINE_POINT=${#l}
+export HISTCONTROL="ignoredups"
+peco-history() {
+    local NUM=$(history | wc -l)
+    local FIRST=$((-1*(NUM-1)))
+
+    if [ $FIRST -eq 0 ] ; then
+        history -d $((HISTCMD-1))
+        echo "No history" >&2
+        return
+    fi
+
+    local CMD=$(fc -l $FIRST | sort -k 2 -k 1nr | uniq -f 1 | sort -nr | sed -E 's/^[0-9]+[[:blank:]]+//' | peco | head -n 1)
+
+    if [ -n "$CMD" ] ; then
+        history -s $CMD
+
+        if type osascript > /dev/null 2>&1 ; then
+            (osascript -e 'tell application "System Events" to keystroke (ASCII character 30)' &)
+        fi
+    else
+        history -d $((HISTCMD-1))
+    fi
 }
 
 # search current directory
@@ -49,6 +61,7 @@ peco-find() {
   READLINE_LINE="${READLINE_LINE:0:$READLINE_POINT}${l}${READLINE_LINE:$READLINE_POINT}"
   READLINE_POINT=$(($READLINE_POINT + ${#l}))
 }
+
 function peco-find-all() {
   local l=$(\find . -maxdepth 8 | peco)
   READLINE_LINE="${READLINE_LINE:0:$READLINE_POINT}${l}${READLINE_LINE:$READLINE_POINT}"
@@ -57,27 +70,16 @@ function peco-find-all() {
 
 bind -x '"\C-uc": peco-find'
 bind -x '"\C-ua": peco-find-all'
-bind -x '"\C-r": peco-select-history'
+bind -x '"\C-r":peco-history'
 
 alias ls="ls -G"
 alias rake="bundle exec rake"
 alias rails="bundle exec rails"
-alias r="rails"
 alias cd="cdls"
-alias d="docker-compose run web"
-alias dd="docker-compose down"
-alias du="docker-compose up"
-alias dp="docker-compose ps"
-alias ds="docker-compose run --service-ports web"
 alias st="git status"
 alias co="git checkout"
 alias diff="git diff"
-alias add="git add"
-alias push="git push"
-alias pull="git pull"
 alias cm="git commit"
-alias br="git branch"
-alias fe="git fetch"
 alias gg="git grep"
 alias vi="vim"
-alias vii="vim +"
+alias g='cd $(ghq root)/$(ghq list | peco)'
